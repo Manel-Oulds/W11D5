@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { getPokemonTypes } from '../store/pokemon';
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { getPokemonTypes } from "../store/pokemon";
+import { addOnePokemon } from "../store/pokemon";
 
 const EditPokemonForm = ({ pokemon, hideForm }) => {
-  const pokeTypes = useSelector(state => state.pokemon.types);
+  const pokeTypes = useSelector((state) => state.pokemon.types);
   const dispatch = useDispatch();
 
   const [number, setNumber] = useState(pokemon.number);
@@ -31,19 +32,20 @@ const EditPokemonForm = ({ pokemon, hideForm }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // const payload = {
-    //   ...pokemon,
-    //   number,
-    //   attack,
-    //   defense,
-    //   imageUrl,
-    //   name,
-    //   type,
-    //   move1,
-    //   move2,
-    //   moves: [move1, move2]
-    // };
-    
+    const payload = {
+      ...pokemon,
+      number,
+      attack,
+      defense,
+      imageUrl,
+      name,
+      type,
+      move1,
+      move2,
+      moves: [move1, move2],
+    };
+    dispatch(editPokemon(payload));
+
     let updatedPokemon;
     if (updatedPokemon) {
       hideForm();
@@ -64,7 +66,8 @@ const EditPokemonForm = ({ pokemon, hideForm }) => {
           min="1"
           required
           value={number}
-          onChange={updateNumber} />
+          onChange={updateNumber}
+        />
         <input
           type="number"
           placeholder="Attack"
@@ -72,7 +75,8 @@ const EditPokemonForm = ({ pokemon, hideForm }) => {
           max="100"
           required
           value={attack}
-          onChange={updateAttack} />
+          onChange={updateAttack}
+        />
         <input
           type="number"
           placeholder="Defense"
@@ -80,37 +84,58 @@ const EditPokemonForm = ({ pokemon, hideForm }) => {
           max="100"
           required
           value={defense}
-          onChange={updateDefense} />
+          onChange={updateDefense}
+        />
         <input
           type="text"
           placeholder="Image URL"
           value={imageUrl}
-          onChange={updateImageUrl} />
+          onChange={updateImageUrl}
+        />
         <input
           type="text"
           placeholder="Name"
           value={name}
-          onChange={updateName} />
+          onChange={updateName}
+        />
         <input
           type="text"
           placeholder="Move 1"
           value={move1}
-          onChange={updateMove1} />
+          onChange={updateMove1}
+        />
         <input
           type="text"
           placeholder="Move 2"
           value={move2}
-          onChange={updateMove2} />
+          onChange={updateMove2}
+        />
         <select onChange={updateType} value={type}>
-          {pokeTypes.map(type =>
+          {pokeTypes.map((type) => (
             <option key={type}>{type}</option>
-          )}
+          ))}
         </select>
         <button type="submit">Update Pokemon</button>
-        <button type="button" onClick={handleCancelClick}>Cancel</button>
+        <button type="button" onClick={handleCancelClick}>
+          Cancel
+        </button>
       </form>
     </section>
   );
+};
+
+export const editPokemon = (pokemon) => (dispatch) => {
+  // debugger;
+  fetch(`/api/pokemon/${pokemon.id}`, {
+    method: "PUT",
+    body: JSON.stringify(pokemon),
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    },
+  })
+    .then((res) => res.json())
+    .then((data) => dispatch(addOnePokemon(data)));
 };
 
 export default EditPokemonForm;

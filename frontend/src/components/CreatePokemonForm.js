@@ -4,6 +4,7 @@ import { useHistory } from "react-router-dom";
 import { getPokemonTypes } from "../store/pokemon";
 import { addOnePokemon } from "../store/pokemon";
 
+
 const CreatePokemonForm = ({ hideForm }) => {
   const pokeTypes = useSelector((state) => state.pokemon.types);
   const dispatch = useDispatch();
@@ -145,5 +146,7 @@ export const addingPokemon = (pokemon) => (dispatch) => {
     .then((res) => res.json())
     .then((data) => dispatch(addOnePokemon(data)));
 };
+
+
 
 export default CreatePokemonForm;
